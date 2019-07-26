@@ -1,0 +1,143 @@
+#############################################################################
+# PokerTH - The open source texas holdem engine                             #
+# Copyright (C) 2006-2012 Felix Hammer, Florian Thauer, Lothar May          #
+#                                                                           #
+# This program is free software: you can redistribute it and/or modify      #
+# it under the terms of the GNU Affero General Public License as            #
+# published by the Free Software Foundation, either version 3 of the        #
+# License, or (at your option) any later version.                           #
+#                                                                           #
+# This program is distributed in the hope that it will be useful,           #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #
+# GNU Affero General Public License for more details.                       #
+#                                                                           #
+# You should have received a copy of the GNU Affero General Public License  #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
+#                                                                           #
+#                                                                           #
+# Additional permission under GNU AGPL version 3 section 7                  #
+#                                                                           #
+# If you modify this program, or any covered work, by linking or            #
+# combining it with the OpenSSL project's OpenSSL library (or a             #
+# modified version of that library), containing parts covered by the        #
+# terms of the OpenSSL or SSLeay licenses, the authors of PokerTH           #
+# (Felix Hammer, Florian Thauer, Lothar May) grant you additional           #
+# permission to convey the resulting work.                                  #
+# Corresponding Source for a non-source form of such a combination          #
+# shall include the source code for the parts of OpenSSL used as well       #
+# as that of the covered work.                                              #
+#############################################################################
+
+name: pokerth
+base: core18
+version: '1.1.2'
+summary: PokerTH 1.1.2
+description: |
+   PokerTH - The open source texas holdem engine
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  pokerth:
+      command: desktop-launch $SNAP/bin/pokerth
+      environment:
+         "LD_LIBRARY_PATH": "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
+      plugs: [x11, desktop, network, home, pulseaudio]
+parts:
+   pokerth:
+      plugin: dump
+      source: .
+      organize:
+         pokerth: bin/
+      override-build: |
+         # @TODO: any other way like stage or filesets?
+         cp /root/parts/client/build/pokerth .
+         mkdir -p /root/prime/share/pokerth
+         cp -r /root/parts/client/build/data /root/prime/share/pokerth/.
+         snapcraftctl build
+      after: [client]
+   qt5:
+      source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+      source-branch: stable
+      source-subdir: qt
+      plugin: make
+      make-parameters: ["FLAVOR=qt5"]
+      build-packages:
+         - dpkg-dev
+         - qtbase5-dev
+      stage-packages:
+         - try: [appmenu-qt5]
+         - dmz-cursor-theme
+         - fonts-dejavu-core
+         - gsfonts-x11
+         - libgdk-pixbuf2.0-0
+         - libglu1-mesa
+         - libpulse0
+         - libqt5core5a
+         - libqt5dbus5
+         - libqt5gui5
+         - libqt5network5
+         - libqt5svg5
+         - libqt5widgets5
+         - libqt5x11extras5
+         - libslang2
+         - libxcb-xinerama0
+         - libxkbcommon0
+         - light-themes
+         - locales-all
+         - qt5dxcb-plugin
+         - shared-mime-info
+         - ttf-ubuntu-font-family
+   client:
+      source: https://github.com/pokerth/pokerth.git
+      source-type: git
+      source-branch: stable
+      plugin: qmake
+      qt-version: qt5
+      options:
+         - CONFIG+="client"
+         - QMAKE_CFLAGS_ISYSTEM=-I
+      project-files:
+         - pokerth.pro
+      build-packages:
+         - build-essential
+         - libboost-chrono-dev
+         - libboost-date-time-dev
+         - libboost-dev
+         - libboost-filesystem-dev
+         - libboost-iostreams-dev
+         - libboost-program-options-dev
+         - libboost-random-dev
+         - libboost-regex-dev
+         - libboost-thread-dev
+         - libcurl3-gnutls-dev
+         - libgcrypt-dev
+         - libgsasl7-dev
+         - libircclient-dev
+         - libprotobuf-dev
+         - libsdl-mixer1.2-dev
+         - libsdl1.2-dev
+         - libsqlite3-dev
+         - libtinyxml-dev
+         - protobuf-compiler
+         - zlib1g-dev
+      stage-packages:
+         - libboost-filesystem1.65.1
+         - libboost-iostreams1.65.1
+         - libboost-random1.65.1
+         - libboost-regex1.65.1
+         - libboost-system1.65.1
+         - libboost-thread1.65.1
+         - libcurl3-gnutls
+         - libgcc1
+         - libgcrypt20
+         - libgsasl7
+         - libprotobuf10
+         - libsdl-mixer1.2
+         - libsdl1.2debian
+         - libsqlite3-0
+         - libstdc++6
+         - libtinyxml2.6.2v5
+         - zlib1g
+      after: [qt5]
