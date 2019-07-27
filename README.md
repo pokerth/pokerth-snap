@@ -16,7 +16,7 @@ You need snapd and snapcraft installed. Best is to use the snap variant of snapc
 
 * clone the repository and enter the folder
 
-* building this snap inside a vm requires multipass - 
+* building this snap inside a vm requires multipass / @TODO: detailed explanation
 
 * run snapcraft
   `snapcraft`
