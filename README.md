@@ -11,6 +11,7 @@ You need snapd and snapcraft installed. Best is to use the snap variant of snapc
 * install snapcraft:
 
   `sudo snap install snapcraft --classic`
+  
   (https://snapcraft.io/docs/snapcraft-overview)
 
 * clone the repository and enter the folder
