@@ -30,4 +30,3 @@ You need snapd and snapcraft installed. Best is to use the snap variant of snapc
 
   `pokerth`
 
-Desktop Shortcut/-Icon/Menu Entry will follow...
