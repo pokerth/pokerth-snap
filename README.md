@@ -16,13 +16,13 @@ You need snapd and snapcraft installed. Best is to use the snap variant of snapc
 
 * clone the repository and enter the folder
 
-* building this snap inside a vm requires multipass / @TODO: detailed explanation
-
 * run snapcraft:
 
   `snapcraft`
 
-  It should create a core18 multipass vm in which the whole build process takes place. The build process should result in a snap file.
+* agree to install multipass if not installed
+
+  It will then also download a core18 VM in which the whole build process takes place. The build process should result in a snap file.
 
 * Use `snap install --devmode [SnapFile].snap` to install the snap.
 

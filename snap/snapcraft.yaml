@@ -35,15 +35,20 @@ version: '1.1.2'
 summary: PokerTH 1.1.2
 description: |
    PokerTH - The open source texas holdem engine
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+icon: pokerth.png
+
+environment:
+  XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
 
 apps:
   pokerth:
       command: desktop-launch $SNAP/bin/pokerth
+      desktop: pokerth.desktop
       environment:
          "LD_LIBRARY_PATH": "$LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
-      plugs: [x11, desktop, network, home, pulseaudio]
+      plugs: [x11, network, home, pulseaudio]
 parts:
    pokerth:
       plugin: dump
@@ -51,13 +56,15 @@ parts:
       organize:
          pokerth: bin/
       override-build: |
-         # @TODO: any other way like stage or filesets?
          cp /root/parts/client/build/pokerth .
          mkdir -p /root/prime/share/pokerth
          cp -r /root/parts/client/build/data /root/prime/share/pokerth/.
          snapcraftctl build
+      override-prime: |
+         snapcraftctl prime
+         cp  /root/project/pokerth.png /root/prime/usr/share/pixmaps/.
       after: [client]
-   qt5:
+   desktop:
       source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
       source-branch: stable
       source-subdir: qt
@@ -140,4 +147,4 @@ parts:
          - libstdc++6
          - libtinyxml2.6.2v5
          - zlib1g
-      after: [qt5]
+      after: [desktop]
